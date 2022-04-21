@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth ;
+use Illuminate\Support\Facades\DB;
+
 
 class SocialController extends Controller
 { 
@@ -18,13 +19,30 @@ class SocialController extends Controller
             $users = User::where(['email' => $userSocial->getEmail()])->first();
             if($user){
                 User::where('email', $userSocial->getEmail())
-                ->update(['refreshToken' => $userSocial->refreshToken , 'token' => $userSocial->token
+                ->update(['refreshToken' => $userSocial->refreshToken , 'token' => $userSocial->token , 'provider' => $provider 
                 ]);
             }
             elseif($users){
-                Auth::login($users);
-                $loginDetails = ['user' => $userSocial->token , 'email' => $userSocial->getEmail()];
-                return view('gmail.index' , compact('loginDetails'));
+                $loginDetails = ['user' => $userSocial->token , 'email' => $userSocial->getEmail()  , 'label' => 'null'];
+                $labels =  getGmailList($loginDetails);
+                
+                function create($labels){
+                    $inputs = $labels;
+                    foreach ($inputs as $input) {
+                        foreach ($input as $input) {
+                            // dd($input);
+                            $test = DB::table('labels')->where( 'id_', $input['id'])->first();
+                            if(!$test)
+                            {
+                                DB::table('labels')->insert(array( 'id_' => $input['id'] , 'name' => $input['name'] , 'message_list_visibility' => $input['messageistVisibility']??'' , 'label_list_visibility' => $input['labelListVisibility']??'' , 'type' => $input['type']));                        }
+                            }
+                    }
+                }
+
+                create($labels);
+
+                return redirect()->route('label.index');
+                // return view('gmail.index' , compact('label'));
             }
             else{
                 $user = User::create([
@@ -39,5 +57,5 @@ class SocialController extends Controller
                 return redirect()->route('home');
             }
         }
-    
+
 }

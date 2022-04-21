@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth ;
 use App\Http\Controllers\SocialController;
+use App\Http\Controllers\LabelController;
 use App\Http\Controllers\HomeController;
 
 
@@ -30,10 +31,12 @@ Route::get('/label', function () {
     return view('gmail.label');
 })->middleware('auth');
 
+Route::resource('label',LabelController::class)->middleware('auth');
+
+
 Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware('auth');
 
 // route for gmail login 
 
 Route::get('login/{provider}', [SocialController::class,'redirect']);
-// Route::get('login/{provider}', [SocialController::class,'redirectEmail']);
 Route::get('login/{provider}/callback',[SocialController::class,'Callback']);

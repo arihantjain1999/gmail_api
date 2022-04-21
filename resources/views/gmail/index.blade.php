@@ -1,12 +1,12 @@
 @extends('layouts.app')
 @section('content')
-@php
-    $labels =  getGmailList($loginDetails);
+    {!!Form::open(['route' => 'label.index'] , ['method'=>'POST'])!!}
 
-@endphp
-    @foreach ($labels as $label)
-        @foreach ($label as $label)
-            <br><a href="#" value ='{{$label['id']}}' class="btn btn-success m-1">{{$label['name']}}</a>
+    <select class="form-control" name="Contact_detach_id " >  
+        @foreach($labels as $label) 
+        <option value= "{{ $label->id }}"> {{$label->name}}</option>
         @endforeach
-    @endforeach
+    </select>   
+    {!!Form::submit('hit' , ['class'=>'btn btn-primary ml-3']);!!}
+    {!! Form::close() !!}
 @endsection 
