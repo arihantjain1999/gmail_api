@@ -10,12 +10,17 @@ class SocialController extends Controller
 { 
         public function redirect($provider)
         {
-            $scope = ['https://www.googleapis.com/auth/gmail.modify', 'https://mail.google.com/'];  
+            $scope = ['https://mail.google.com/'];  
             return Socialite::driver($provider)->scopes($scope)->with(['access_type' => 'offline'])->redirect();
         }
         public function Callback($provider){
             $userSocial = Socialite::driver('google')->stateless()->user();
+            // dd($userSocial);
+            // update token in db 
+            User::where('email', $userSocial->getEmail())->update(['token' => $userSocial->token ]);
+            
             $user = User::where(['email' => $userSocial->getEmail()])->whereNull('refreshToken')->first();
+            
             $users = User::where(['email' => $userSocial->getEmail()])->first();
             if($user){
                 User::where('email', $userSocial->getEmail())
@@ -38,11 +43,9 @@ class SocialController extends Controller
                             }
                     }
                 }
-
                 create($labels);
-
+                // dd("i m here");
                 return redirect()->route('label.index');
-                // return view('gmail.index' , compact('label'));
             }
             else{
                 $user = User::create([

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 use Laravel\Socialite\Facades\Socialite;
-
+use Auth;
 use App\Models\Label;
 use Illuminate\Http\Request;
 
@@ -15,17 +15,8 @@ class LabelController extends Controller
      */
     public function index()
     {
-        $fields=  [
-            'id',
-            'name',
-            'messageListVisibility',
-            'labelListVisibility',
-            'type',
-        ];
-        $labels = Label::all('*');
-        // dd($labels);
-        return view('gmail.index' , ['labels' => $labels] );
-
+        // $labels = Label::all('*');
+        return view('gmail.index');
     }
 
     /**
@@ -33,9 +24,15 @@ class LabelController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-       
+        $userDetails = Auth::user();
+        $fields =  $request->all();
+        $label = last($fields);
+        return view('gmail.gmailmesseges' , ["label" => $label]);
+        $emaildetais = ['emailId' => 'null' ,'email' => $userDetails->email ,'user' => $userDetails->token , 'labelIds' => $label];
+        getGmailMessage($emaildetais);
+        return view('gmail.gmailmesseges');;
     }
 
     /**

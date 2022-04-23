@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth ;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\LabelController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\GmailController;
 
 
 /*
@@ -24,6 +25,9 @@ use App\Http\Controllers\HomeController;
 Route::get('/', function () {
     return view('index');
 })->middleware('auth');
+Route::get('/compose', function () {
+    return view('gmail.compose');
+})->middleware('auth');
 
 
 Auth::routes();
@@ -32,6 +36,7 @@ Route::get('/label', function () {
 })->middleware('auth');
 
 Route::resource('label',LabelController::class)->middleware('auth');
+// Route::resource('gmail',GmailController::class)->middleware('auth');
 
 
 Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware('auth');
