@@ -4,6 +4,9 @@
 <main class="inbox">
     <div class="toolbar">
         <div class="btn-group">
+            <button class="btn btn-light" onclick="openNav()">
+                <i class="fa fa-bars fa-xl"></i>
+            </button>
             <button type="button" class="btn btn-light">
                 <span class="fa fa-envelope"></span>
             </button>
@@ -34,7 +37,7 @@
     {{-- </div>
     {{$label}}
     {{-- @dd($label);    --}}
-    {{-- @dd(empty($label)); --}} --}}
+    {{-- @dd(empty($label)); --}} 
     @php   
         // if(empty($label)){
 

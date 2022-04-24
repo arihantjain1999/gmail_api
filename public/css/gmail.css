@@ -215,15 +215,35 @@
         }
     }
     .open-button {
-        padding: 16px 20px;
+        padding: 10px;
         cursor: pointer;
         opacity: 0.8;
         position: fixed;
-        bottom: 23px;
+        top: 60px;
         right: 28px;
-        width: 280px;
+        width: 150px;
+        border-color: green;
+        border-radius: 10px;
+        transition: 0.3s;
       }
+   
       
+      .open-button2 {
+        z-index: 2;
+        padding: 10px;
+        cursor: pointer;
+        opacity: 0.8;
+        position: fixed;
+        top: 60px;
+        left: 28px;
+        width: 150px;
+        border-color: green;
+        border-radius: 10px;
+        transition: 0.3s;
+      }
+   
+
+
       /* The popup chat - hidden by default */
       .chat-popup {
         display: none;
@@ -236,19 +256,22 @@
       
       /* Add styles to the form container */
       .form-container {
-        max-width: 700px;
+        max-width: 500px;
         padding: 10px;
         background-color: white;
+        border-radius: 7px;
+        box-shadow: 0px 0px 7px rgb(68, 68, 68);
       }
       
       /* Full-width textarea */
       .form-container textarea {
         width: 100%;
-        padding: 15px 10px;
-        margin: 5px 0 22px 0;
+        padding: 10px 7px;
+        margin: 5px 0 30px 0;
         border: none;
         resize: none;
-        min-height: 200px;
+        min-height: 100px;
+        /* box-shadow: 0px 0px 5px rgb(88, 88, 88); */
       }
       
       /* When the textarea gets focus, do something */
@@ -263,10 +286,83 @@
         border: none;
         cursor: pointer;
         margin-bottom:10px;
-        opacity: 0.8;
+        opacity: 0.9;
+        transition: .6s;
+
       }
       
       /* Add some hover effects to buttons */
       .form-container .btn:hover, .open-button:hover {
         opacity: 1;
+        box-shadow: 0px 0px 5px rgb(34, 34, 34);
       }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     
+      .sidenav {
+        height: 100%; /* 100% Full-height */
+        width: 250px; /* 0 width - change this with JavaScript */
+        position: fixed; /* Stay in place */
+        z-index: 3; /* Stay on top */
+        top: 0;
+        left: 0;
+        background-color: #212529; /* Black*/
+        overflow-x: hidden; /* Disable horizontal scroll */
+        padding-top: 60px; /* Place content 60px from the top */
+        transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+      }
+      
+      /* The navigation menu links */
+      .sidenav a {
+        text-decoration: none;
+        font-size: 25px;
+        color: #818181;
+        display: block;
+        transition: 0.3s;
+      }
+      
+      /* When you mouse over the navigation links, change their color */
+      .sidenav a:hover {
+        color: #f1f1f1;
+      }
+      
+      /* Position and style the close button (top right corner) */
+      .sidenav .closebtn {
+        position: absolute;
+        top: 60px;
+        z-index: 100;
+        right: 20px;
+        font-size: 36px;
+        margin-left: 50px;
+      }
+      
+      /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
+      #main {
+        transition: margin-left .5s;
+        margin-left: 250px;
+      }
+      
+      /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+      @media screen and (max-height: 450px) {
+        .sidenav {padding-top: 15px;}
+        .sidenav a {font-size: 18px;}
+      }
+      
