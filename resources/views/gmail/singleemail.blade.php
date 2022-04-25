@@ -1,32 +1,6 @@
 @extends('layouts.app')
 @section('content')
-<div id="mySidenav" class="sidenav">
-    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    <nav class="navbar navbar-expand-md shadow-sm align-items-start">
-        <ul class="nav ">
-            <li class="nav-item">
-                @php
-                    $labels = DB::table('labels')
-                        ->select('*')
-                        ->get();
-                @endphp
-                @foreach ($labels as $label)
-                {!! Form::open(['route' => 'label.create', 'method' => 'GET']) !!}
-                    @csrf
-                    <div class="form-group d-none">
-                        <div class="col-sm-5">
-                            <select class="form-control" name={{ $label->name }}>
-                                <option value={{ $label->id_ }}>None</option>
-                            </select>
-                        </div>
-                    </div>
-                    {!! Form::submit(Str::ucfirst(Str::lower($label->name)), ['class' => 'btn btn-dark  m-1 w-100']) !!}
-                    {!! Form::close() !!}
-                @endforeach
-            </li>
-        </ul>
-    </nav>
-</div>
+    @include('gmail.index')
     <div id="main">
         @php
             $maildetails = $user = DB::table('mails')
@@ -34,10 +8,7 @@
                 ->first();
             // dump($maildetails->body);
             // $encodedData = str_replace(' ','+',$maildetails->body);
-            if(!empty($maildetails->body)){
-
-                $decocedData = base64_decode($maildetails->body);
-            }
+            $decocedData = base64_decode($maildetails->body);
         @endphp
         <div class="m-">
             <div class="row inbox-wrapper">
@@ -72,6 +43,12 @@
 
                                                     <h3>Mail</h3>
                                                 </div>
+                                                {{-- <div class="icons">
+                          <a href="#" class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-share text-muted hover-primary-muted" data-toggle="tooltip" title="" data-original-title="Forward"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></a>
+                          <a href="#" class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer text-muted" data-toggle="tooltip" title="" data-original-title="Print"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></a>
+                          <a href="#" class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash text-muted" data-toggle="tooltip" title="" data-original-title="Delete"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                          </a>
+                        </div> --}}
                                             </div>
                                         </div>
                                         <div
@@ -79,17 +56,19 @@
                                             <div class="d-flex align-items-center">
 
                                                 <div class="sender align-items-center">
-                                                @php
-                                                    
-                                                    if(!empty($maildetails->body)){
-                                                    echo('<div> From : {{ $maildetails->from }}</div>
+                                                    <div> From : {{ $maildetails->from }}</div>
                                                     <div>To : {{ $maildetails->to }}</div>
                                                     <div class="date">{{ $maildetails->date }}</div>
-                                                    <div>Subject : {{ $maildetails->subject }}</div>');
-                                                    }
-                                                    @endphp
-
-                                                    
+                                                    <div>Subject : {{ $maildetails->subject }}</div>
+                                                    {{-- <div class="actions dropdown">
+                            <a class="icon" href="#" data-toggle="dropdown"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg></a>
+                            <div class="dropdown-menu" role="menu">
+                              <a class="dropdown-item" href="#">Mark as read</a>
+                              <a class="dropdown-item" href="#">Mark as unread</a>
+                              <a class="dropdown-item" href="#">Spam</a>
+                              <div class="dropdown-divider"></div>
+                              <a class="dropdown-item text-danger" href="#">Delete</a>
+                            </div> --}}
                                                 </div>
                                             </div>
                                         </div>
@@ -97,10 +76,7 @@
                                 </div>
                                 <div class="email-body">
                                     @php
-                                                    if(!empty($maildetails->body)){
-                                    
                                         echo $decocedData;
-                                                    }
                                     @endphp
                                 </div>
                             </div>
