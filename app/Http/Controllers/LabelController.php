@@ -1,9 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-use Laravel\Socialite\Facades\Socialite;
-use Auth;
+
 use App\Models\Label;
+use Auth;
 use Illuminate\Http\Request;
 
 class LabelController extends Controller
@@ -15,8 +15,7 @@ class LabelController extends Controller
      */
     public function index()
     {
-        // $labels = Label::all('*');
-        return view('gmail.index');
+        return view('gmail.gmailmesseges');
     }
 
     /**
@@ -27,12 +26,24 @@ class LabelController extends Controller
     public function create(Request $request)
     {
         $userDetails = Auth::user();
-        $fields =  $request->all();
+        $fields = $request->all();
         $label = last($fields);
-        return view('gmail.gmailmesseges' , ["label" => $label]);
-        $emaildetais = ['emailId' => 'null' ,'email' => $userDetails->email ,'user' => $userDetails->token , 'labelIds' => $label];
-        getGmailMessage($emaildetais);
-        return view('gmail.gmailmesseges');;
+        if (empty($fields)) {
+            $emaildetais = ['emailId' => 'null', 'email' => $userDetails->email, 'user' => $userDetails->token, 'labelIds' => $label, 'labelname' => ''];
+        } else {
+            $labelName = last(array_keys($fields));
+
+            $emaildetais = ['emailId' => 'null', 'email' => $userDetails->email, 'user' => $userDetails->token, 'labelIds' => $label, 'labelname' => $labelName];
+            $response = getGmailMessage($emaildetais);
+
+            if (is_string($response)) {
+                return view('gmail.gmailmesseges', ['err' => $response]);
+
+            } else {
+                return view('gmail.gmailmesseges', ['labelid' => $label]);
+            }
+        }
+
     }
 
     /**
@@ -43,7 +54,7 @@ class LabelController extends Controller
      */
     public function store(Request $request)
     {
-        
+
     }
 
     /**
@@ -52,9 +63,10 @@ class LabelController extends Controller
      * @param  \App\Models\Label  $label
      * @return \Illuminate\Http\Response
      */
-    public function show(Label $label)
+    public function show(Request $request, $id)
     {
-        //
+        // dd($id);
+        return view('gmail.singleemail', ['mail_id' => $id]);
     }
 
     /**
@@ -89,5 +101,12 @@ class LabelController extends Controller
     public function destroy(Label $label)
     {
         //
+    }
+
+    public function getMyLabels(Request $request)
+    {
+        $label = $request->all();
+        $label = last($label);
+        return view('gmail.gmailmesseges', ['labelid' => $label]);
     }
 }

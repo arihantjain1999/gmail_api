@@ -18,6 +18,8 @@ class Mail extends Model
         'to',
         'thread_id',
         'label_ids',
+        'history_id',
+        'user_email',
     ];
 
     protected $hidden = [
