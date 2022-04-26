@@ -3,6 +3,7 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LabelController;
 use App\Http\Controllers\SocialController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -29,11 +30,15 @@ Route::get('/compose', function () {
 
 Auth::routes();
 // Route::get('/label', function () {
-    //     return view('gmail.label');
-    // })->middleware('auth');
-    
-Route::get('/label/get-labels',[ LabelController::class,'getMyLabels'])->name('label.get-labels')->middleware('auth');
+//     return view('gmail.label');
+// })->middleware('auth');
+
+Route::get('/label/get-labels', [LabelController::class, 'getMyLabels'])->name('label.get-labels')->middleware('auth');
+Route::get('/label/sendmail', [LabelController::class, 'sendmail'])->name('label.sendmail')->middleware('auth');
+Route::get('/label/scearch', [LabelController::class, 'scearch'])->name('label.scearch')->middleware('auth');
 Route::resource('label', LabelController::class)->middleware('auth');
+Route::resource('user',UserController::class)->middleware('auth');
+
 // Route::resource('gmail',GmailController::class)->middleware('auth');
 
 Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware('auth');
@@ -42,8 +47,3 @@ Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware(
 
 Route::get('login/{provider}', [SocialController::class, 'redirect']);
 Route::get('login/{provider}/callback', [SocialController::class, 'Callback']);
-
-
-
-
-

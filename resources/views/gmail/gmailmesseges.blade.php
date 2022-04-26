@@ -6,52 +6,58 @@
             <main class="inbox">
                 <div class="toolbar">
                     <div class="btn-group">
-                        <button class="btn btn-light" onclick="openNav()">
+                        <button class="btn  " onclick="openNav()">
                             <i class="fa fa-bars fa-xl"></i>
                         </button>
-                        <button type="button" class="btn btn-light">
+                        <button type="button" class="btn  ">
                             <span class="fa fa-envelope"></span>
                         </button>
-                        <button type="button" class="btn btn-light">
+                        <button type="button" class="btn  ">
                             <span class="fa fa-star"></span>
                         </button>
-                        <button type="button" class="btn btn-light">
+                        <button type="button" class="btn  ">
                             <span class="fa fa-star-o"></span>
                         </button>
-                        <button type="button" class="btn btn-light">
+                        <button type="button" class="btn  ">
                             <span class="fa fa-bookmark-o"></span>
                         </button>
-
-                        {{-- <div>
-                        <a href="{{ route('label.create') }}" name = 'label_ids' value="abc">sync</a>
-                    </div> --}}
+                            {!! Form::open(['route' => 'label.scearch', 'method' => 'GET']) !!}
+                            <div class="input-group">
+                                <input type="search" class="form-control" placeholder="Search"  name= "scearch"/>
+                                <span class="input-group-text border-0" id="search-addon">
+                                    <button class="btn p-0" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </span>
+                              </div>
+                              {!! Form::close() !!}
                     </div>
                     <div class="btn-group">
-                        <button type="button" class="btn btn-light">
-                            <span class="fa fa-mail-reply"></span>
-                        </button>
-                        <button type="button" class="btn btn-light">
-                            <span class="fa fa-mail-reply-all"></span>
-                        </button>
-                        <button type="button" class="btn btn-light">
-                            <span class="fa fa-mail-forward"></span>
-                        </button>
+                        @php
+                            $labels = DB::table('labels')
+                                ->select('*')
+                                ->get();
+                        @endphp
                         {!! Form::open(['route' => 'label.create', 'method' => 'GET']) !!}
                         @csrf
-                        <div class="form-group d-none">
-                            <div class="col-sm-5">
-                                <select class="form-control" name='label_ids'>
-                                    <option value=''>None</option>
-                                </select>
-                            </div>
+                        <div class="btn w-60">
+                            <select class="form-control" name='label_ids'>
+                                <option value=''>None</option>
+                                @foreach ($labels as $label)
+                                    <div class="col-sm-5">
+                                        <option value=' {{ $label->name }} '> {{Str::ucfirst(Str::lower(str_replace( "CATEGORY_", "",$label->name)))}} </option>
+                                    </div>
+                                @endforeach
+                            </select>
                         </div>
-                        {!! Form::submit('Sync', ['class' => 'btn btn-secondary  m-1 w-100']) !!}
+                        {!! Form::submit('Sync', ['class' => 'btn btn-secondary  m-1 w-60']) !!}
                         {!! Form::close() !!}
                     </div>
                     {{-- @dd(empty($labelid)); --}}
-                    <button type="button" class="btn btn-light">
+                    <button type="button" class="btn  ">
                         <span class="fa fa-trash-o"></span>
                     </button>
+                    
                     @php
                         if (!empty($err)) {
                             echo $err;
@@ -69,6 +75,17 @@
                                 ->where('user_email', Auth::user()->email)
                                 ->get();
                         }
+                        if(!empty($scearchData)){
+                            // dd($scearchData);
+                            $allmails = DB::table('mails')
+                                ->select('*')
+                                ->orwhere('from', 'like', '%' . $scearchData . '%')
+                                ->orwhere('label_ids', 'like', '%' . $scearchData . '%')
+                                ->orwhere('to', 'like', '%' . $scearchData . '%')
+                                ->orwhere('subject', 'like', '%' . $scearchData . '%')
+                                ->where('user_email', Auth::user()->email)
+                                ->get();
+                        }
                     @endphp
                     @foreach ($allmails as $mail)
                         <ul class="messages">
@@ -82,7 +99,13 @@
                                         <div class="header">
                                             <span class="from">{{ $mail->from }}</span>
                                             <span class="date">
-                                                <span class="fa fa-paper-clip"></span>{{ $mail->date }}</span>
+                                                <span class="fa fa-paper-clip"></span>
+                                                @php
+                                                    
+                                                    $date = dateFormat($mail->date);
+                                                     echo $date ;
+                                                @endphp
+                                                     </span>
                                         </div>
                                         <div class="title">
                                             {{ $mail->subject }}
@@ -100,23 +123,31 @@
                     </button>
 
                     <div class="chat-popup" id="myForm">
-                        <form action="/action_page.php" class="form-container">
-
+                        <form action=" {{ route('label.sendmail') }} " class="form-container">
+                            {{-- <div class="form-row mb-3">
+                                <label for="to" class="col-2 col-sm-1 col-form-label">To:</label>
+                                <div class="col-10 col-sm-11">
+                                    <input type="email" class="form-control" id="to" placeholder="Type email">
+                                </div>
+                            </div> --}}
+                            <label>From : </label>
                             <input class="fill-text my-2 p-2 w-100 border-0 bg-light" type="text" placeholder="From"
-                                name="From" required>
+                                name="From" value="{{ Auth::user()->email }}" required>
+                            <label>To : </label>
                             <input class="fill-text my-2 p-2 w-100 border-0 bg-light" type="text" placeholder="To" name="To"
                                 required>
+                            <label>Subject : </label>
                             <input class="fill-text my-2 p-2 w-100 border-0 bg-light" type="text" placeholder="Subject"
                                 name="Subject" required>
-                            <textarea class="bg-light" placeholder="Type message.." name="msg" required></textarea>
-
+                            <label>Type Messege : </label>
+                            <textarea class="bg-light" placeholder="Type message.." name="Body" required></textarea>
                             <div class="d-flex">
                                 <i class="fa fa-paperclip"></i>
                             </div>
                             <br />
                             <div class="d-flex justify-content-between">
                                 <button type="submit" class="btn rounded btn-success text-white">Send</button>
-                                <button type="button" class="btn cancel btn-danger" onclick="closeForm()">Back</button>
+                                <button type="button"  class="btn cancel btn-danger" onclick="closeForm()">Back</button>
                             </div>
                         </form>
                     </div>

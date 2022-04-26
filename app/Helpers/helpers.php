@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 function getGmailList($loginDetails)
 {
     $thetoken = $loginDetails['user'];
@@ -32,7 +33,7 @@ function getGmailMessage($loginDetails)
     $emailId = $loginDetails['emailId'];
     $labelId = $loginDetails['labelIds'];
     $labelName = $loginDetails['labelname'];
-    // dd($labelName);
+    // dd($labelId);
     $ch = curl_init();
     $headers = array("Authorization: Bearer " . $thetoken . "");
 
@@ -52,7 +53,6 @@ function getGmailMessage($loginDetails)
     $response = curl_exec($ch);
     curl_close($ch);
     $response = json_decode($response, true);
-    // dd($response);
     // dd($allMesseges);
     if (isset($response['messages'])) 
     {
@@ -103,7 +103,6 @@ function getGmailMessage($loginDetails)
                     $str = Str::lower($mailData);
                     $str = str_replace('-', '_', $str);
                     $mailDatabase[$str] = $payloadheader['value'];
-
                 }
             }
         }
@@ -131,7 +130,7 @@ function getGmailMessage($loginDetails)
                 "body" => $allMail['body'],
                 "from" => $allMail['from'],
                 "date" => $allMail['date'],
-                "message_id" => $allMail['message_id'],
+                "message_id" => $allMail['message_id'] ?? '',
                 "subject" => $allMail['subject'],
                 "to" => $allMail['to'],
                 "mail_id" => $allMail['mail_id'],
@@ -151,9 +150,68 @@ function getGmailMessage($loginDetails)
 else {
     $err = '<div class="alert alert-warning alert-dismissible fade show m-2" role="alert">
     The <strong>'.$labelName.'</strong> has no New Emails.
-   
+
   </div>';
     return $err ;
 }
 
+}
+
+
+
+function sendGmailMessage($loginDetails, $messageDetails)
+{
+    // dd($messageDetails);
+    //forming data that has to be sent
+    $from = 'To: '.$messageDetails['To'].'
+From: '.$messageDetails['From'].'
+Subject: '.$messageDetails['Subject'].'
+
+'.$messageDetails['Body'];
+    // dd($from);
+
+    $thetoken =  $loginDetails['token'];
+    // dd($thetoken);
+    $email =  $loginDetails['email'];
+
+    $curl = curl_init();
+
+    //encoding data to be sent
+    $encoded = base64_encode($from);
+   
+
+    //Sent cURL api 
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://gmail.googleapis.com/gmail/v1/users/'.$email.'/messages/send',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => 'CURL_HTTP_VERSION_1_1',
+        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_POSTFIELDS => json_encode(["raw"=>$encoded]),
+        CURLOPT_HTTPHEADER => array(
+            'Authorization: Bearer '.$thetoken.'',
+            'Content-Type: application/json'
+        ),
+    ));
+
+    $response = curl_exec($curl);
+
+    curl_close($curl);
+    
+    $response = json_decode($response,true);
+    // dd($response);
+    return $response;
+  
+}
+
+
+
+
+function dateFormat($date){
+    // dd($date);
+    $dateFormated = Carbon::parse($date)->format('d/m/Y H:i');
+    return $dateFormated ;
 }

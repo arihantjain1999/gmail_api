@@ -42,6 +42,7 @@ class SocialController extends Controller
                 }
             }
             create($labels);
+            // dd("i m here");
             return redirect()->route('label.index');
         } else {
             $user = User::create([

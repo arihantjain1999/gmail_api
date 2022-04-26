@@ -1,9 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\DB;
 use App\Models\Label;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class LabelController extends Controller
@@ -27,6 +27,7 @@ class LabelController extends Controller
     {
         $userDetails = Auth::user();
         $fields = $request->all();
+        // dd($fields);
         $label = last($fields);
         if (empty($fields)) {
             $emaildetais = ['emailId' => 'null', 'email' => $userDetails->email, 'user' => $userDetails->token, 'labelIds' => $label, 'labelname' => ''];
@@ -43,7 +44,6 @@ class LabelController extends Controller
                 return view('gmail.gmailmesseges', ['labelid' => $label]);
             }
         }
-
     }
 
     /**
@@ -65,7 +65,6 @@ class LabelController extends Controller
      */
     public function show(Request $request, $id)
     {
-        // dd($id);
         return view('gmail.singleemail', ['mail_id' => $id]);
     }
 
@@ -109,4 +108,36 @@ class LabelController extends Controller
         $label = last($label);
         return view('gmail.gmailmesseges', ['labelid' => $label]);
     }
+
+    public function sendmail(Request $request)
+    {
+        $mailDetails = $request->all();
+         $emialFrom=$mailDetails['From'];
+        $userDetails = Auth::User();
+
+        if($userDetails->email == $emialFrom){
+            $sentMessageData = sendGmailMessage($userDetails, $request->all());
+            // $sentMessageID = $sentMessageData['id'];
+            return view('gmail.gmailmesseges');
+        }
+        else{
+            $err = '<div class="alert alert-danger" role="alert">
+            You cannot send email with different emailID!
+          </div>';
+          return view('gmail.gmailmesseges' ,  ['err' => $err]);
+
+        }
+    }
+
+        public function scearch(Request $request)
+        {
+             $scearchData= $request->all();
+            //  dd($scearchData['scearch']);
+            // $allmails = DB::table('mails')
+            //                     ->select('*')
+            //                     ->where('from', 'like', '%' . $scearchData . '%')
+            //                     ->where('user_email', Auth::user()->email)
+            //                     ->get();
+            return view('gmail.gmailmesseges' , ['scearchData' => $scearchData['scearch'] ]);
+        }
 }

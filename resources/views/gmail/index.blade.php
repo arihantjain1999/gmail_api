@@ -18,7 +18,9 @@
                             </select>
                         </div>
                     </div>
-                    {!! Form::submit(Str::ucfirst(Str::lower($label->name)), ['class' => 'btn btn-dark  m-1 w-100']) !!}
+                    {{-- $str = str_replace('-', '_', $str); --}}
+
+                    {!! Form::submit(Str::ucfirst(Str::lower(str_replace( "CATEGORY_", "",$label->name))), ['class' => 'btn btn-dark  m-1 ps-4 w-100']) !!}
                     {!! Form::close() !!}
                 @endforeach
             </li>

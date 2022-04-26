@@ -5,7 +5,7 @@
         display: flex;
         flex-direction: row;
         background: #fff;
-        border: 1px solid #e1e6ef;
+        /* border: 1px solid #e1e6ef; */
     }
     
     .email-app nav {
@@ -67,6 +67,7 @@
     .email-app .inbox .messages {
         padding: 0;
         list-style: none;
+        text-decoration: none;
     }
     
     .email-app .inbox .message {
@@ -97,6 +98,7 @@
     
     .email-app .inbox .message a {
         color: #000;
+        text-decoration: none;
     }
     
     .email-app .inbox .message a:hover {
@@ -349,7 +351,7 @@
         position: absolute;
         top: 60px;
         z-index: 100;
-        right: 20px;
+        right: 50px;
         font-size: 36px;
         margin-left: 50px;
       }
