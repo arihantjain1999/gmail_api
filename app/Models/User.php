@@ -24,6 +24,7 @@ class User extends Authenticatable
         'provider',
         'providerid',
         'token',
+        'user_type',
         'refreshToken'
     ];
 

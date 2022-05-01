@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'MailApp') }}</title>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
@@ -27,21 +27,17 @@
 
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-dark bg-dark  sticky-top shadow-sm">
+        <nav class="navbar navbar-expand-md navbar-light sticky-top shadow-sm" id="navbar">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
+                    {{ config('app.name', 'MailApp') }}
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                @if (Auth::check())
-                    <ul class="navbar-nav ">
-                        <a class="btn btn-warning mx-2" href="{{ route('user.index') }}">Admin</a>
-                    </ul>
-                @endif
+               
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     @if (Auth::check())
@@ -69,15 +65,27 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
-                                                         document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a>
                                     <a class="dropdown-item" href="{{ route('user.show', Auth::user()->id) }}">
                                         User
                                     </a>
+                                   @php
+                                       $usertype = DB::table('users')
+                                       ->select('user_type')
+                                       ->where('email', Auth::user()->email)
+                                       ->first();
+                                    //    dd($usertype->user_type);
+                                   @endphp
+                                    @if ( $usertype->user_type == 'Admin' )
+                                        <a class="dropdown-item" href="{{ route('user.index') }}">Admin</a>
+                                        
+                                        <a class="dropdown-item" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                        @endif
+                                        <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
+                                                             document.getElementById('logout-form').submit();">
+                                            {{ __('Logout') }}
+                                        </a>
 
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                    <form id = "logout-form" action="{{ route('logout') }}" method="POST"
                                         class="d-none">
                                         @csrf
                                     </form>

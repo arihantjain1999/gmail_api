@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('providerid')->nullable();
             $table->string('token')->nullable();
             $table->string('refreshToken')->nullable();
+            $table->string('user_type')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

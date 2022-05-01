@@ -9,7 +9,7 @@
                         <button class="btn  " onclick="openNav()">
                             <i class="fa fa-bars fa-xl"></i>
                         </button>
-                        <button type="button" class="btn  ">
+                        {{-- <button type="button" class="btn  ">
                             <span class="fa fa-envelope"></span>
                         </button>
                         <button type="button" class="btn  ">
@@ -20,17 +20,17 @@
                         </button>
                         <button type="button" class="btn  ">
                             <span class="fa fa-bookmark-o"></span>
-                        </button>
-                            {!! Form::open(['route' => 'label.scearch', 'method' => 'GET']) !!}
-                            <div class="input-group">
-                                <input type="search" class="form-control" placeholder="Search"  name= "scearch"/>
-                                <span class="input-group-text border-0" id="search-addon">
-                                    <button class="btn p-0" type="submit">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                </span>
-                              </div>
-                              {!! Form::close() !!}
+                        </button> --}}
+                        {!! Form::open(['route' => 'label.scearch', 'method' => 'GET']) !!}
+                        <div class="input-group">
+                            <input type="search" class="form-control" placeholder="Search" name="scearch" />
+                            <span class="input-group-text border-0" id="search-addon">
+                                <button class="btn p-0" type="submit">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </span>
+                        </div>
+                        {!! Form::close() !!}
                     </div>
                     <div class="btn-group">
                         @php
@@ -45,7 +45,9 @@
                                 <option value=''>None</option>
                                 @foreach ($labels as $label)
                                     <div class="col-sm-5">
-                                        <option value=' {{ $label->name }} '> {{Str::ucfirst(Str::lower(str_replace( "CATEGORY_", "",$label->name)))}} </option>
+                                        <option value=' {{ $label->name }} '>
+                                            {{ Str::ucfirst(Str::lower(str_replace('CATEGORY_', '', $label->name))) }}
+                                        </option>
                                     </div>
                                 @endforeach
                             </select>
@@ -57,59 +59,57 @@
                     <button type="button" class="btn  ">
                         <span class="fa fa-trash-o"></span>
                     </button>
-                    
+
                     @php
                         if (!empty($err)) {
                             echo $err;
                         }
-                        if (empty($labelid)) {
+                        if (empty($allmails)) {
                             $allmails = DB::table('mails')
                                 ->select('*')
                                 ->orderBy('id', 'desc')
-                                ->where('user_email', Auth::user()->email)
-                                ->get();
-                        } else {
-                            $allmails = DB::table('mails')
-                                ->select('*')
-                                ->where('label_ids', 'like', '%' . $labelid . '%')
+                                ->whereNot('label_ids' , 'like' ,'%TRASH%')
                                 ->where('user_email', Auth::user()->email)
                                 ->get();
                         }
-                        if(!empty($scearchData)){
-                            // dd($scearchData);
-                            $allmails = DB::table('mails')
-                                ->select('*')
-                                ->orwhere('from', 'like', '%' . $scearchData . '%')
-                                ->orwhere('label_ids', 'like', '%' . $scearchData . '%')
-                                ->orwhere('to', 'like', '%' . $scearchData . '%')
-                                ->orwhere('subject', 'like', '%' . $scearchData . '%')
-                                ->where('user_email', Auth::user()->email)
-                                ->get();
-                        }
+                        
                     @endphp
                     @foreach ($allmails as $mail)
                         <ul class="messages">
-                            <li class="message unread">
+                            <li class="message">
                                 <a href="{{ route('label.show', $mail->mail_id) }}">
                                     <div>
                                         <div class="actions">
-                                            <span class="action"><i class="fa fa-square-o"></i></span>
-                                            <span class="action"><i class="fa fa-star-o"></i></span>
+
+                                            {{-- <span class="action"><i class="fa fa-square-o"></i></span> --}}
+                                            {{-- <span class="action"><i class="fa fa-star-o"></i></span> --}}
                                         </div>
                                         <div class="header">
-                                            <span class="from">{{ $mail->from }}</span>
+                                            <span class="from"> <b> {{ $mail->from }} </b> &nbsp;&nbsp;
+                                                {{ $mail->subject }}</span>
                                             <span class="date">
+
                                                 <span class="fa fa-paper-clip"></span>
                                                 @php
                                                     
                                                     $date = dateFormat($mail->date);
-                                                     echo $date ;
+                                                    echo $date;
                                                 @endphp
-                                                     </span>
+                                            </span>
+
+                                            <a href="{{ route('label.deletemail', ['delete' => $mail->mail_id]) }}"
+                                                class="mx-1">
+                                                <span class="fa fa-trash-o"></span>
+                                            </a>
+                                            <a href="{{ route('label.starredmail', ['delete' => $mail->mail_id]) }}"
+                                                class="mx-1">
+                                                <span class="fa fa-star"></span>
+                                            </a>
                                         </div>
-                                        <div class="title">
+                                        {{-- <div class="title">
                                             {{ $mail->subject }}
-                                        </div>
+                                        </div> --}}
+
                                         <div class="description">
                                         </div>
                                     </div>
@@ -147,7 +147,7 @@
                             <br />
                             <div class="d-flex justify-content-between">
                                 <button type="submit" class="btn rounded btn-success text-white">Send</button>
-                                <button type="button"  class="btn cancel btn-danger" onclick="closeForm()">Back</button>
+                                <button type="button" class="btn cancel btn-danger" onclick="closeForm()">Back</button>
                             </div>
                         </form>
                     </div>

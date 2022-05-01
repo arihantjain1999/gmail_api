@@ -25,7 +25,8 @@ class SocialController extends Controller
             User::where('email', $userSocial->getEmail())
                 ->update(['refreshToken' => $userSocial->refreshToken, 'token' => $userSocial->token, 'provider' => $provider,
                 ]);
-        } elseif ($users) {
+        } 
+        elseif ($users) {
             $loginDetails = ['user' => $userSocial->token, 'email' => $userSocial->getEmail(), 'label' => 'null'];
             $labels = getGmailList($loginDetails);
 

@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        // $schedule->call('App\Http\Controllers\LabelController@create')->everyMinute();
         // $schedule->command('inspire')->hourly();
     }
 

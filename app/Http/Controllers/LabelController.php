@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Support\Facades\DB;
+
 use App\Models\Label;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class LabelController extends Controller
 {
@@ -15,7 +16,13 @@ class LabelController extends Controller
      */
     public function index()
     {
-        return view('gmail.gmailmesseges');
+        $allmails = DB::table('mails')
+            ->select('*')
+            ->orderBy('id', 'desc')
+            ->whereNot('label_ids' , 'like' ,'%TRASH%')
+            ->where('user_email', Auth::user()->email)
+            ->get();
+        return view('gmail.gmailmesseges', ['allmails' => $allmails]);
     }
 
     /**
@@ -29,6 +36,7 @@ class LabelController extends Controller
         $fields = $request->all();
         // dd($fields);
         $label = last($fields);
+        // dd($label);
         if (empty($fields)) {
             $emaildetais = ['emailId' => 'null', 'email' => $userDetails->email, 'user' => $userDetails->token, 'labelIds' => $label, 'labelname' => ''];
         } else {
@@ -39,9 +47,14 @@ class LabelController extends Controller
 
             if (is_string($response)) {
                 return view('gmail.gmailmesseges', ['err' => $response]);
-
             } else {
-                return view('gmail.gmailmesseges', ['labelid' => $label]);
+                $allmails = DB::table('mails')
+                    ->select('*')
+                    ->where('label_ids', 'like', '%' . $label . '%')
+                    ->whereNot('label_ids' , 'like' ,'%TRASH%')
+                    ->where('user_email', Auth::user()->email)
+                    ->get();
+                return view('gmail.gmailmesseges', ['allmails' => $allmails]);
             }
         }
     }
@@ -106,38 +119,92 @@ class LabelController extends Controller
     {
         $label = $request->all();
         $label = last($label);
-        return view('gmail.gmailmesseges', ['labelid' => $label]);
+        // dd($label);
+        if($label!='TRASH'){
+
+            $allmails = DB::table('mails')
+            ->select('*')
+            ->where('label_ids', 'like', '%' . $label . '%')
+            ->whereNot('label_ids' , 'like' ,'%TRASH%')
+            ->where('user_email', Auth::user()->email)
+            ->get();
+        }
+        else{
+            $allmails = DB::table('mails')
+            ->select('*')
+            ->where('label_ids', 'like', '%' . $label . '%')
+            // ->whereNot('label_ids' , 'like' ,'%TRASH%')
+            ->where('user_email', Auth::user()->email)
+            ->get();
+
+        }
+        return view('gmail.gmailmesseges', ['allmails' => $allmails]);
     }
 
     public function sendmail(Request $request)
     {
         $mailDetails = $request->all();
-         $emialFrom=$mailDetails['From'];
+        $emialFrom = $mailDetails['From'];
         $userDetails = Auth::User();
 
-        if($userDetails->email == $emialFrom){
+        if ($userDetails->email == $emialFrom) {
             $sentMessageData = sendGmailMessage($userDetails, $request->all());
             // $sentMessageID = $sentMessageData['id'];
             return view('gmail.gmailmesseges');
-        }
-        else{
+        } else {
             $err = '<div class="alert alert-danger" role="alert">
             You cannot send email with different emailID!
           </div>';
-          return view('gmail.gmailmesseges' ,  ['err' => $err]);
+            return view('gmail.gmailmesseges', ['err' => $err]);
 
         }
     }
 
-        public function scearch(Request $request)
-        {
-             $scearchData= $request->all();
-            //  dd($scearchData['scearch']);
-            // $allmails = DB::table('mails')
-            //                     ->select('*')
-            //                     ->where('from', 'like', '%' . $scearchData . '%')
-            //                     ->where('user_email', Auth::user()->email)
-            //                     ->get();
-            return view('gmail.gmailmesseges' , ['scearchData' => $scearchData['scearch'] ]);
-        }
+    public function scearch(Request $request)
+    {
+        $scearchData = $request->all();
+        //  dd($scearchData['scearch']);
+        $allmails = DB::table('mails')
+            ->select('*')
+            ->orwhere('from', 'like', '%' . $scearchData['scearch'] . '%')
+            ->orwhere('label_ids', 'like', '%' . $scearchData['scearch'] . '%')
+            ->orwhere('to', 'like', '%' . $scearchData['scearch'] . '%')
+            ->orwhere('subject', 'like', '%' . $scearchData['scearch'] . '%')
+            ->where('user_email', Auth::user()->email)
+            ->get();
+        return view('gmail.gmailmesseges', ['allmails' => $allmails]);
+    }
+
+    public function deletemail(Request $request)
+    {
+        $deletemail = $request->all();
+        $allmails = DB::table('mails')
+            ->select('mail_id', 'label_ids')
+            ->where('mail_id', $deletemail['delete'])
+            ->where('user_email', Auth::user()->email)
+            ->first();
+        $adddeletelabel = $allmails->label_ids . ',TRASH';
+        DB::table('mails')
+            ->where('mail_id', $deletemail['delete'])
+            ->where('user_email', Auth::user()->email) // find your user by their email
+            ->limit(1) // optional - to ensure only one record is updated.
+            ->update(array('label_ids' => $adddeletelabel)); // update the record in the DB.
+        return view('gmail.gmailmesseges');
+    }
+    public function starredmail(Request $request)
+    {
+        $deletemail = $request->all();
+        $allmails = DB::table('mails')
+            ->select('mail_id', 'label_ids')
+            ->where('mail_id', $deletemail['delete'])
+            ->where('user_email', Auth::user()->email)
+            ->first();
+        $adddeletelabel = $allmails->label_ids . ',STARRED';
+        DB::table('mails')
+            ->where('mail_id', $deletemail['delete'])
+            ->where('user_email', Auth::user()->email) // find your user by their email
+            ->limit(1) // optional - to ensure only one record is updated.
+            ->update(array('label_ids' => $adddeletelabel)); // update the record in the DB.
+        return view('gmail.gmailmesseges');
+    }
 }

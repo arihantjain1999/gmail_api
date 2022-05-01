@@ -6,7 +6,13 @@
             $maildetails = $user = DB::table('mails')
                 ->where('mail_id', $mail_id)
                 ->first();
-            $decocedData = base64_decode($maildetails->body);
+                // dd($maildetails->body);
+                $encodedData = $maildetails->body ; 
+                $encodedData = str_replace(' ','+',$encodedData);
+                $encodedData = str_replace('_','/',$encodedData);
+                $encodedData = str_replace('-','+',$encodedData);
+            $decocedData = base64_decode($encodedData);
+            // dd($decocedData);
         @endphp
         <div class="m-">
             <div class="row inbox-wrapper">
@@ -59,9 +65,7 @@
                                     </div>
                                 </div>
                                 <div class="email-body">
-                                    @php
-                                        echo $decocedData;
-                                    @endphp
+                                   {!! $decocedData !!}
                                 </div>
                             </div>
                         </div>
