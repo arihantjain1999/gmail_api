@@ -68,7 +68,7 @@
                             $allmails = DB::table('mails')
                                 ->select('*')
                                 ->orderBy('id', 'desc')
-                                ->whereNot('label_ids' , 'like' ,'%TRASH%')
+                                ->whereNot('label_ids', 'like', '%TRASH%')
                                 ->where('user_email', Auth::user()->email)
                                 ->get();
                         }
@@ -89,7 +89,7 @@
                                                 {{ $mail->subject }}</span>
                                             <span class="date">
 
-                                                <span class="fa fa-paper-clip"></span>
+                                                {{-- <span class="fa fa-paper-clip"></span> --}}
                                                 @php
                                                     
                                                     $date = dateFormat($mail->date);
@@ -97,15 +97,34 @@
                                                 @endphp
                                             </span>
 
-                                            <a href="{{ route('label.deletemail', ['delete' => $mail->mail_id]) }}"
-                                                class="mx-1">
-                                                <span class="fa fa-trash-o"></span>
-                                            </a>
+
+                                        </div>
+                                        @php
+                                        // dd($mail->mail_id);
+                                            $allmaillabels = DB::table('mails')
+                                                ->select('*')
+                                                ->where('mail_id' , $mail->mail_id)
+                                                ->where('user_email', Auth::user()->email)
+                                                ->first();
+                                        @endphp
+                                        @if (Str::contains($allmaillabels->label_ids, "STARRED"))
                                             <a href="{{ route('label.starredmail', ['delete' => $mail->mail_id]) }}"
                                                 class="mx-1">
                                                 <span class="fa fa-star"></span>
                                             </a>
-                                        </div>
+                                        @else
+                                            <a href="{{ route('label.starredmail', ['delete' => $mail->mail_id]) }}"
+                                                class="mx-1">
+                                                <span class="fa fa-star-o"></span>
+                                            </a>
+                                        @endif
+                                        @if (!Str::contains($allmaillabels->label_ids, "TRASH"))
+                                        <a href="{{ route('label.deletemail', ['delete' => $mail->mail_id]) }}"
+                                            class="mx-1">
+                                            <span class="fa fa-trash-o"></span>
+                                        </a>
+                                        @endif
+
                                         {{-- <div class="title">
                                             {{ $mail->subject }}
                                         </div> --}}
@@ -117,6 +136,7 @@
                             </li>
                         </ul>
                     @endforeach
+                    {{-- @dd('hello'); --}}
                     <button class="open-button bg-white text-black  border-2" onclick="openForm()">
                         <i class="fa fa-pen mx-2"></i>
                         COMPOSE
@@ -131,11 +151,11 @@
                                 </div>
                             </div> --}}
                             <label>From : </label>
-                            <input class="fill-text my-2 p-2 w-100 border-0 bg-light" type="text" placeholder="From"
+                            <input class="fill-text my-2 p-2 w-100 border-0 bg-light" type="email" placeholder="From"
                                 name="From" value="{{ Auth::user()->email }}" required>
                             <label>To : </label>
-                            <input class="fill-text my-2 p-2 w-100 border-0 bg-light" type="text" placeholder="To" name="To"
-                                required>
+                            <input class="fill-text my-2 p-2 w-100 border-0 bg-light" type="email" placeholder="To"
+                                name="To" required>
                             <label>Subject : </label>
                             <input class="fill-text my-2 p-2 w-100 border-0 bg-light" type="text" placeholder="Subject"
                                 name="Subject" required>

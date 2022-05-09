@@ -82,15 +82,19 @@ function getGmailMessage($loginDetails)
             $arr = implode(',', $labelincsv);
             // dd($arr);
 
-            if (!empty($payloadBodys)) {
-                foreach ($payloadBodys as $payloadBody) {
+            if (!empty($payloadBodys)) 
+            {
+                foreach ($payloadBodys as $payloadBody) 
+                {
                     if ($payloadBody['mimeType'] == 'text/html') {
                         $payloadBodydata = $payloadBody['body'];
                         $mailDatabase['body'] = $payloadBodydata['data'];
                     }
 
                 }
-            } elseif (!empty($payload['body'])) {
+            } 
+            elseif (!empty($payload['body'])) 
+            {
                 $data = $payload['body'];
                 $mailDatabase['body'] = $data['data'];
 
@@ -178,8 +182,7 @@ Date: ' . date('r', strtotime('+5 hour +30 minutes', strtotime(date("Y-m-d H:i:s
 
 
 ' . $messageDetails['Body'];
-// $date = date('r',strtotime('+5 hour +30 minutes',strtotime(date("Y-m-d H:i:s"))));
-// dd($from);
+
 
     $thetoken = $loginDetails['token'];
     // dd($thetoken);
