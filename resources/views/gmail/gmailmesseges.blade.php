@@ -56,7 +56,7 @@
                         {!! Form::close() !!}
                     </div>
                     {{-- @dd(empty($labelid)); --}}
-                    <button type="button" class="btn  ">
+                    <button type="button" class="btn">
                         <span class="fa fa-trash-o"></span>
                     </button>
 
@@ -100,14 +100,11 @@
 
                                         </div>
                                         @php
-                                        // dd($mail->mail_id);
-                                            $allmaillabels = DB::table('mails')
-                                                ->select('*')
-                                                ->where('mail_id' , $mail->mail_id)
-                                                ->where('user_email', Auth::user()->email)
-                                                ->first();
+                                        $maillabels = $mail->label_ids; 
+                                           
                                         @endphp
-                                        @if (Str::contains($allmaillabels->label_ids, "STARRED"))
+                                        {{-- @if(empty($allmaillabels->label_ids)) --}}
+                                        @if (Str::contains($maillabels, "STARRED"))
                                             <a href="{{ route('label.starredmail', ['delete' => $mail->mail_id]) }}"
                                                 class="mx-1">
                                                 <span class="fa fa-star"></span>
@@ -118,13 +115,13 @@
                                                 <span class="fa fa-star-o"></span>
                                             </a>
                                         @endif
-                                        @if (!Str::contains($allmaillabels->label_ids, "TRASH"))
+                                        @if (!Str::contains($maillabels, "TRASH"))
                                         <a href="{{ route('label.deletemail', ['delete' => $mail->mail_id]) }}"
                                             class="mx-1">
                                             <span class="fa fa-trash-o"></span>
                                         </a>
                                         @endif
-
+                                        {{-- @endif --}}
                                         {{-- <div class="title">
                                             {{ $mail->subject }}
                                         </div> --}}
@@ -143,31 +140,24 @@
                     </button>
 
                     <div class="chat-popup" id="myForm">
-                        <form action=" {{ route('label.sendmail') }} " class="form-container">
-                            {{-- <div class="form-row mb-3">
-                                <label for="to" class="col-2 col-sm-1 col-form-label">To:</label>
-                                <div class="col-10 col-sm-11">
-                                    <input type="email" class="form-control" id="to" placeholder="Type email">
-                                </div>
-                            </div> --}}
-                            <label>From : </label>
-                            <input class="fill-text my-2 p-2 w-100 border-0 bg-light" type="email" placeholder="From"
-                                name="From" value="{{ Auth::user()->email }}" required>
-                            <label>To : </label>
-                            <input class="fill-text my-2 p-2 w-100 border-0 bg-light" type="email" placeholder="To"
-                                name="To" required>
-                            <label>Subject : </label>
-                            <input class="fill-text my-2 p-2 w-100 border-0 bg-light" type="text" placeholder="Subject"
-                                name="Subject" required>
-                            <label>Type Messege : </label>
-                            <textarea class="bg-light" placeholder="Type message.." name="Body" required></textarea>
-                            <div class="d-flex">
-                                <i class="fa fa-paperclip"></i>
-                            </div>
-                            <br />
+                        <form action="{{ route('label.sendmail') }}" class="form-container" enctype="multipart/form-data" method="post">
+                            @csrf
+                            <button type="button" class="bg-danger text-white border-0" onclick="closeForm()">&times;</button>
+                        
+                            <input class="fill-text my-2 p-2 w-100 border-0 rounded" type="text" placeholder="From" name="From" id="from" style="background-color: #f0f0f0" value="{{ Auth::user()->email }}">
+                            <input class="fill-text my-2 p-2 w-100 border-0 rounded" type="text" placeholder="To" name="To" id="to" required style="background-color: #f0f0f0">
+                            <input class="fill-text my-2 p-2 w-100 border-0 rounded" type="text" placeholder="Cc" name="Cc" id="cc" style="background-color: #f0f0f0">
+                            <input class="fill-text my-2 p-2 w-100 border-0 rounded" type="text" placeholder="Bcc" name="Bcc" id="bcc" style="background-color: #f0f0f0">
+                            <input class="fill-text my-2 p-2 w-100 border-0 rounded" type="text" placeholder="Subject" name="Subject" id="Subject" required style="background-color: #f0f0f0">
+                            <textarea class="rounded" placeholder="Type message.." name="Body" id="messageText" required style="background-color: #f0f0f0"></textarea>
+                            <br/>
                             <div class="d-flex justify-content-between">
-                                <button type="submit" class="btn rounded btn-success text-white">Send</button>
-                                <button type="button" class="btn cancel btn-danger" onclick="closeForm()">Back</button>
+                                {{-- <div class="">
+                                    <i class="fa fa-paperclip"></i>
+                                    <input type="file" name="File">
+                                </div> --}}
+                                {{Form::file('image')}}
+                                <button type="submit" class="btn rounded text-white" id="send" style="background-color: #32a89d;">Send <i class="fa fa-paper-plane"></i></button>
                             </div>
                         </form>
                     </div>

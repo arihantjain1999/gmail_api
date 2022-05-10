@@ -25,7 +25,8 @@
                         <th>Name</th>
                         <th>Email</th>
                         <th width="280px">Action</th>
-                    </tr>         
+                    </tr>   
+                    {{-- @dd($users);       --}}
                     @foreach ($users as $user)
                 <tr>
                     <td>{{ $user->id }}</td>
@@ -34,8 +35,8 @@
                   
                     <td>
                         <form action="{{ route('user.destroy',$user->id) }}" method="Post">
-                            <a class="btn btn-primary" href="{{ route('user.show',$user->id) }}">Show</a>
-                            {{-- <a class="btn btn-warning" href="{{ route('user.edit',$user->id) }}">Edit</a> --}}
+                            <a class="btn btn-primary" href="{{ route('user.show',$user->email) }}">Show</a>
+                            <a class="btn btn-warning" href="{{ route('user.edit',$user->id) }}">Edit</a>
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger">Delete</button>

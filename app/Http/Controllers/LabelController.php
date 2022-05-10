@@ -148,7 +148,7 @@ class LabelController extends Controller
         $userDetails = Auth::User();
 
         if ($userDetails->email == $emialFrom) {
-            $sentMessageData = sendGmailMessage($userDetails, $request->all());
+            $sentMessageData = sendGmailMessage($userDetails, $request);
             // $sentMessageID = $sentMessageData['id'];
             return view('gmail.gmailmesseges');
         } else {
@@ -167,7 +167,7 @@ class LabelController extends Controller
         $allmails = DB::table('mails')
             ->select('*')
             ->orwhere('from', 'like', '%' . $scearchData['scearch'] . '%')
-            ->orwhere('label_ids', 'like', '%' . $scearchData['scearch'] . '%')
+            // ->orwhere('label_ids', 'like', '%' . $scearchData['scearch'] . '%')
             ->orwhere('to', 'like', '%' . $scearchData['scearch'] . '%')
             ->orwhere('subject', 'like', '%' . $scearchData['scearch'] . '%')
             ->where('user_email', Auth::user()->email)

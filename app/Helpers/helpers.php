@@ -76,7 +76,8 @@ function getGmailMessage($loginDetails)
             $payload = $response['payload'];
             $payloadheaders = $payload['headers'];
             $payloadBodys = $payload['parts'] ?? [];
-
+            
+            // dd($response);
             $labelincsv = $response['labelIds'];
             $arr = [];
             $arr = implode(',', $labelincsv);
@@ -87,6 +88,10 @@ function getGmailMessage($loginDetails)
                 foreach ($payloadBodys as $payloadBody) 
                 {
                     if ($payloadBody['mimeType'] == 'text/html') {
+                        $payloadBodydata = $payloadBody['body'];
+                        $mailDatabase['body'] = $payloadBodydata['data'];
+                    }
+                    elseif ($payloadBody['mimeType'] == 'text/plain') {
                         $payloadBodydata = $payloadBody['body'];
                         $mailDatabase['body'] = $payloadBodydata['data'];
                     }
@@ -157,7 +162,6 @@ function getGmailMessage($loginDetails)
     } else {
         $err = '<div class="alert alert-warning alert-dismissible fade show m-2" role="alert">
     The <strong>' . $labelId . '</strong> has no New Emails.
-
   </div>';
         return $err;
     }
@@ -166,35 +170,56 @@ function getGmailMessage($loginDetails)
 
 function sendGmailMessage($loginDetails, $messageDetails)
 {
-//     $objDateTime = new DateTime('NOW');
-// $isoDate = $objDateTime->format(DateTime::ISO8601);
-// $strRawMessage .= 'To: ' .$strToMailName . " <" . $strToMail . ">" . "\r\n";
-// $strRawMessage .= 'From: '.$strSesFromName . " <" . $strSesFromEmail . ">" . "\r\n";
-// $strRawMessage .= 'cc: Parvezalam Kaliya <parvezalam.kaliya@enjayworld.com>, Suyog Kadu <suyog.kadu@enjayworld.com>' . "\r\n";
-// $strRawMessage .= 'Bcc:  Sangam Test <sangamtesting6@gmail.com>, Jalpa <jalpa.p@enjayworld.com>' . "\r\n";
+    $request = $messageDetails;
+    $messageDetails = $messageDetails->all();
 
+    if ($request->hasFile('image')) {
+        $fileName = $request->file('image')->getClientOriginalName();
+        $filePath = $request->file('image')->storeAs('public/attachment', $fileName);
+        $filePath = storage_path() . '\app\public\attachment\\' . $fileName;
 
-    $from = 'To: ' . $messageDetails['To'] . '
-From:   ' . Auth::user()->name . '   <' . $messageDetails['From'] . '>
-Subject: ' . $messageDetails['Subject'] . '
+        $boundary = uniqid(rand(), true);
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $filePath);
+    }
 
-Date: ' . date('r', strtotime('+5 hour +30 minutes', strtotime(date("Y-m-d H:i:s")))) . '
-
+//Message format that has to be sent
+    if ($request->hasFile('image')) {
+        $from = 'To: ' . $messageDetails['To'] . '
+From: ' . Auth::user()->name . '   <' . $messageDetails['From'] . '>
+Cc: ' . $messageDetails['Cc'] . '
+Bcc: ' . $messageDetails['Bcc'] . '
+Subject: =?uth-8?B?' . base64_encode($messageDetails['Subject']) . '?=
+Content-type: multipart/mixed; boundary="' . $boundary . '"' . "\r\n" . '
+--' . $boundary . '
+Content-type: multipart/alternative; boundary="' . $boundary . '"' . "\r\n" . '
+--' . $boundary . '
+Content-Type: text/plain; charset=utf-8' . "\r\n" . '
+' . $messageDetails['Body'] . "\r\n" . '
+--' . $boundary . '
+Content-Type: ' . $mimeType . '; name="' . $fileName . '";' . '
+Content-Disposition: attachment; filename="' . $fileName . '"; size=' . filesize($filePath) . ';' . '
+Content-Transfer-Encoding: base64' . '
+Content-ID: <' . $messageDetails['From'] . '>'. '
+' . chunk_split(base64_encode(file_get_contents($filePath)), 76) . "\r\n" . "\r\n" . '
+--' . $boundary;
+    } else {
+        $from = 'To: ' . $messageDetails['To'] . '
+From: ' . Auth::user()->name . '   <' . $messageDetails['From'] . '>
+Cc: ' . $messageDetails['Cc'] . '
+Bcc: ' . $messageDetails['Bcc'] . '
+Subject: =?uth-8?B?' . base64_encode($messageDetails['Subject']) . '?=
 
 ' . $messageDetails['Body'];
-
+    }
 
     $thetoken = $loginDetails['token'];
-    // dd($thetoken);
     $email = $loginDetails['email'];
-
+    // dd($from);
     $curl = curl_init();
 
     //encoding data to be sent
     $encoded = base64_encode($from);
-    // dd($encoded);
-
-    //Sent cURL api
     curl_setopt_array($curl, array(
         CURLOPT_URL => 'https://gmail.googleapis.com/gmail/v1/users/' . $email . '/messages/send',
         CURLOPT_RETURNTRANSFER => true,
@@ -212,11 +237,8 @@ Date: ' . date('r', strtotime('+5 hour +30 minutes', strtotime(date("Y-m-d H:i:s
     ));
 
     $response = curl_exec($curl);
-// dd($response);
     curl_close($curl);
-
     $response = json_decode($response, true);
-    // dd($response);
     return $response;
 
 }

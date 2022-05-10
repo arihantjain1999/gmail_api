@@ -36,7 +36,7 @@ Auth::routes();
 Route::get('/label/get-labels', [LabelController::class, 'getMyLabels'])->name('label.get-labels')->middleware('auth');
 Route::get('/label/deletemail', [LabelController::class, 'deletemail'])->name('label.deletemail')->middleware('auth');
 Route::get('/label/starredmail', [LabelController::class, 'starredmail'])->name('label.starredmail')->middleware('auth');
-Route::get('/label/sendmail', [LabelController::class, 'sendmail'])->name('label.sendmail')->middleware('auth');
+Route::post('/label/sendmail', [LabelController::class, 'sendmail'])->name('label.sendmail')->middleware('auth');
 Route::get('/label/scearch', [LabelController::class, 'scearch'])->name('label.scearch')->middleware('auth');
 Route::resource('label', LabelController::class)->middleware('auth');
 Route::resource('user',UserController::class)->middleware('auth');

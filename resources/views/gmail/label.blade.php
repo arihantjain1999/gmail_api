@@ -48,7 +48,7 @@
             </form>
             <form action="{{ route('user.destroy',$users->id) }}" method="Post">
                             <a class="btn btn-primary" href="{{ route('label.index') }}">Back</a>
-                            {{-- <a class="btn btn-warning" href="{{ route('user.edit',$users->id) }}">Edit</a> --}}
+                            <a class="btn btn-warning" href="{{ route('user.edit',$users->id) }}">Edit</a>
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger">Delete</button>

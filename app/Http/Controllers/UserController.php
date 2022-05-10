@@ -5,6 +5,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 class UserController extends Controller
 {
     /**
@@ -27,7 +29,9 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        // dd('hellpo');
+        return view('gmail.create');
+        
     }
 
     /**
@@ -38,7 +42,24 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request->all());
+        // $request->validate([
+        //     'name' => 'required',
+        //     'email' => 'required',
+        // ]);
+        $fields = $request->all();
+        // dd($fields);
+        $password = $fields['password'];
+        $c_password = $fields['c_password'];
+        if($password == $c_password){
+            $password = bcrypt($password);
+            $fields['password'] = $password;
+            $user = User::create($fields);
+            return redirect()->route('user.index');
+        }
+        else{
+            return redirect()->route('user.create' , ['err' => "password does not match"] );
+        }
     }
 
     /**
@@ -47,12 +68,13 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function show($user)
     {
         // dd($user);
-        $users = User::find($user->id);
-        // dd($user);
-        
+        $users =DB::table('users')
+        ->select('*')
+        ->where('email', $user)
+        ->first();
         // $decrypted = Crypt::decrypt($user->password);
         return view('gmail.label',compact('users'));
     }
@@ -65,8 +87,13 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        $user = User::find($user->id);
-        return view('user.edit',compact('user'));
+        // dd($user->email);
+        $user =DB::table('users')
+        ->select('*')
+        ->where('email', $user->email)
+        ->first();
+        // dd($user);   
+        return view('gmail.edit',compact('user'));
     }
 
     /**
@@ -79,10 +106,16 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $fields = $request->all();
-        $user = User::find($user->id);
-        $user->update($fields);
-        // dd($user);
-        return view('user.index',compact('user'));
+        $users = User::find($user->id);
+        $users->update($fields);
+        // $users = User::all();    
+        $updateuseremail = $request->all() ;
+        $users = $updateuseremail['email'];
+        $users =DB::table('users')
+        ->select('*')
+        ->where('email', $users)
+        ->first();
+        return view('gmail.label',compact('users'));
     }
 
     /**
