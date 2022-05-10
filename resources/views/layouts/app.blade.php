@@ -70,7 +70,7 @@
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     {{-- @dd(Auth::user()->email); --}}
-                                    <a class="dropdown-item" href="{{ route('user.show' , Auth::user()->email) }}">
+                                    <a class="dropdown-item" href="{{ route('label.showUser' , ['email' => Auth::user()->email]) }}">
                                         User Profile
                                     </a>
                                     @if ( $usertype->user_type == 'Admin' ) 

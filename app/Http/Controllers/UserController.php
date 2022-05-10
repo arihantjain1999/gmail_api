@@ -42,13 +42,8 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
-        // $request->validate([
-        //     'name' => 'required',
-        //     'email' => 'required',
-        // ]);
+       
         $fields = $request->all();
-        // dd($fields);
         $password = $fields['password'];
         $c_password = $fields['c_password'];
         if($password == $c_password){
@@ -68,16 +63,16 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show($user)
-    {
-        // dd($user);
-        $users =DB::table('users')
-        ->select('*')
-        ->where('email', $user)
-        ->first();
-        // $decrypted = Crypt::decrypt($user->password);
-        return view('gmail.label',compact('users'));
-    }
+    // public function show($user)
+    // {
+    //     // dd($user);
+    //     $users =DB::table('users')
+    //     ->select('*')
+    //     ->where('email', $user)
+    //     ->first();
+    //     // $decrypted = Crypt::decrypt($user->password);
+    //     return view('gmail.label',compact('users'));
+    // }
 
     /**
      * Show the form for editing the specified resource.
@@ -91,6 +86,17 @@ class UserController extends Controller
         $user =DB::table('users')
         ->select('*')
         ->where('email', $user->email)
+        ->first();
+        // dd($user);   
+        return view('gmail.edit',compact('user'));
+    }
+    public function editUser(Request $request , $id)
+    {
+
+        // dd($id);
+        $user =DB::table('users')
+        ->select('*')
+        ->where('email', $id)
         ->first();
         // dd($user);   
         return view('gmail.edit',compact('user'));

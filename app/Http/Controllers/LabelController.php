@@ -207,4 +207,18 @@ class LabelController extends Controller
             ->update(array('label_ids' => $adddeletelabel)); // update the record in the DB.
         return view('gmail.gmailmesseges');
     }
+    public function showUser(Request $request)
+    {
+        // dd($request->all());
+        $userData = $request->all();
+
+        $users = DB::table('users')->select('*')->where('email', $userData['email'])->first();
+        // dd($users);
+        // $users = User::find($user->id);
+        // dd($user);
+
+        // $decrypted = Crypt::decrypt($user->password);
+        return view('gmail.label',compact('users'));
+    }
 }
+

@@ -21,7 +21,7 @@
             </div>
                 <table class="table table-bordered shadow table-hover text-center w-auto">
                     <tr>
-                        <th>S.No</th>
+                        {{-- <th>S.No</th> --}}
                         <th>Name</th>
                         <th>Email</th>
                         <th width="280px">Action</th>
@@ -29,7 +29,7 @@
                     {{-- @dd($users);       --}}
                     @foreach ($users as $user)
                 <tr>
-                    <td>{{ $user->id }}</td>
+                    {{-- <td>{{ $user->id }}</td> --}}
                     <td>{{ $user->name }} </td>
                     <td>{{ $user->email }}</td>
                   

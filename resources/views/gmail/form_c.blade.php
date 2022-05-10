@@ -42,7 +42,7 @@
             <div class="col-sm-5">
                 <select name="user_type">  
                     <option value="Admin">Admin</option>
-                    <option value="">User</option>
+                    <option value="User">User</option>
                 </select>
             </div>
         </div>
