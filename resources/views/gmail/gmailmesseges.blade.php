@@ -9,18 +9,6 @@
                         <button class="btn  " onclick="openNav()">
                             <i class="fa fa-bars fa-xl"></i>
                         </button>
-                        {{-- <button type="button" class="btn  ">
-                            <span class="fa fa-envelope"></span>
-                        </button>
-                        <button type="button" class="btn  ">
-                            <span class="fa fa-star"></span>
-                        </button>
-                        <button type="button" class="btn  ">
-                            <span class="fa fa-star-o"></span>
-                        </button>
-                        <button type="button" class="btn  ">
-                            <span class="fa fa-bookmark-o"></span>
-                        </button> --}}
                         {!! Form::open(['route' => 'label.scearch', 'method' => 'GET']) !!}
                         <div class="input-group">
                             <input type="search" class="form-control" placeholder="Search" name="scearch" />
@@ -67,7 +55,7 @@
                         if (empty($allmails)) {
                             $allmails = DB::table('mails')
                                 ->select('*')
-                                ->orderBy('id', 'desc')
+                                ->orderBy('history_id', 'desc')
                                 ->whereNot('label_ids', 'like', '%TRASH%')
                                 ->where('user_email', Auth::user()->email)
                                 ->get();
@@ -156,7 +144,7 @@
                                     <i class="fa fa-paperclip"></i>
                                     <input type="file" name="File">
                                 </div> --}}
-                                {{Form::file('image')}}
+                                {{Form::file('image[]' , ['multiple' => true]) }}
                                 <button type="submit" class="btn rounded text-white" id="send" style="background-color: #32a89d;">Send <i class="fa fa-paper-plane"></i></button>
                             </div>
                         </form>
@@ -175,8 +163,8 @@
 
                     /* Set the width of the side navigation to 250px and the left margin of the page content to 250px */
                     function openNav() {
-                        document.getElementById("mySidenav").style.width = "250px";
-                        document.getElementById("main").style.marginLeft = "250px";
+                        document.getElementById("mySidenav").style.width = "200px";
+                        document.getElementById("main").style.marginLeft = "200px";
                     }
 
                     /* Set the width of the side navigation to 0 and the left margin of the page content to 0 */

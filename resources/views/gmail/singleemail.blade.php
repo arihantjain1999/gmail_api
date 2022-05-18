@@ -6,7 +6,7 @@
             $maildetails = $user = DB::table('mails')
                 ->where('mail_id', $mail_id)
                 ->first();
-                // dd($maildetails->body);
+                // dd($maildetails->file_name);
                 $encodedData = $maildetails->body ; 
                 $encodedData = str_replace(' ','+',$encodedData);
                 $encodedData = str_replace('_','/',$encodedData);
@@ -55,6 +55,7 @@
                                             <div class="d-flex align-items-center">
 
                                                 <div class="sender align-items-center">
+                                                    <div> User : {{ $maildetails->from  }}</div>
                                                     <div> From : {{ $maildetails->from }}</div>
                                                     <div>To : {{ $maildetails->to }}</div>
                                                     <div class="date">{{ $maildetails->date }}</div>
@@ -67,6 +68,14 @@
                                 <div class="email-body">
                                    {!! $decocedData !!}
                                 </div>
+                                @php
+                                   $filenames = explode(',' , $maildetails->file_name);
+                                //    dd($filenames);
+                                @endphp
+                                <span>Files :</span>
+                                @foreach ($filenames as $filename)
+                                    <a href="{{ asset('storage\public\attachment\\'.$filename.'') }} " target="blank">{{ $filename }}</a>
+                                @endforeach
                             </div>
                         </div>
 
@@ -79,8 +88,8 @@
     <script>
         /* Set the width of the side navigation to 250px and the left margin of the page content to 250px */
         function openNav() {
-            document.getElementById("mySidenav").style.width = "250px";
-            document.getElementById("main").style.marginLeft = "250px";
+            document.getElementById("mySidenav").style.width = "200px";
+            document.getElementById("main").style.marginLeft = "200px";
         }
 
         /* Set the width of the side navigation to 0 and the left margin of the page content to 0 */

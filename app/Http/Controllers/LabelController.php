@@ -16,13 +16,28 @@ class LabelController extends Controller
      */
     public function index()
     {
-        $allmails = DB::table('mails')
-            ->select('*')
-            ->orderBy('id', 'desc')
-            ->whereNot('label_ids' , 'like' ,'%TRASH%')
-            ->where('user_email', Auth::user()->email)
-            ->get();
-        return view('gmail.gmailmesseges', ['allmails' => $allmails]);
+        $userDetails = DB::table('users')
+            ->select('user_type')
+            ->where('email', Auth::user()->email)
+            ->first();
+        $userType = $userDetails->user_type;
+        if ($userType == "Admin") {
+            $allmails = DB::table('mails')
+                ->select('*')
+                ->orderBy('history_id', 'desc')
+                ->whereNot('label_ids', 'like', '%TRASH%')
+            // ->where('user_email', Auth::user()->email)
+                ->get();
+            return view('gmail.gmailmesseges', ['allmails' => $allmails]);
+        } else {
+            $allmails = DB::table('mails')
+                ->select('*')
+                ->orderBy('history_id', 'desc')
+                ->whereNot('label_ids', 'like', '%TRASH%')
+                ->where('user_email', Auth::user()->email)
+                ->get();
+            return view('gmail.gmailmesseges', ['allmails' => $allmails]);
+        }
     }
 
     /**
@@ -51,7 +66,8 @@ class LabelController extends Controller
                 $allmails = DB::table('mails')
                     ->select('*')
                     ->where('label_ids', 'like', '%' . $label . '%')
-                    ->whereNot('label_ids' , 'like' ,'%TRASH%')
+                    ->whereNot('label_ids', 'like', '%TRASH%')
+                    ->orderBy('history_id', 'desc')
                     ->where('user_email', Auth::user()->email)
                     ->get();
                 return view('gmail.gmailmesseges', ['allmails' => $allmails]);
@@ -120,29 +136,58 @@ class LabelController extends Controller
         $label = $request->all();
         $label = last($label);
         // dd($label);
-        if($label!='TRASH'){
+        $userDetails = DB::table('users')
+            ->select('user_type')
+            ->where('email', Auth::user()->email)
+            ->first();
+        $userType = $userDetails->user_type;
+        if ($userType == "Admin") {
+            if ($label != 'TRASH') {
+                $allmails = DB::table('mails')
+                    ->select('*')
+                    ->where('label_ids', 'like', '%' . $label . '%')
+                    ->whereNot('label_ids', 'like', '%TRASH%')
+                    ->orderBy('history_id', 'desc')
+                    ->get();
+            } 
+            else
+            {
+                $allmails = DB::table('mails')
+                    ->select('*')
+                    ->where('label_ids', 'like', '%' . $label . '%')
+                    ->orderBy('history_id', 'desc')
+                    ->get();
+            }
+            return view('gmail.gmailmesseges', ['allmails' => $allmails]);
+        } else {
+            // dd('hello');
+            if ($label != 'TRASH') {
 
-            $allmails = DB::table('mails')
-            ->select('*')
-            ->where('label_ids', 'like', '%' . $label . '%')
-            ->whereNot('label_ids' , 'like' ,'%TRASH%')
-            ->where('user_email', Auth::user()->email)
-            ->get();
-        }
-        else{
-            $allmails = DB::table('mails')
-            ->select('*')
-            ->where('label_ids', 'like', '%' . $label . '%')
-            // ->whereNot('label_ids' , 'like' ,'%TRASH%')
-            ->where('user_email', Auth::user()->email)
-            ->get();
+                $allmails = DB::table('mails')
+                    ->select('*')
+                    ->where('label_ids', 'like', '%' . $label . '%')
+                    ->whereNot('label_ids', 'like', '%TRASH%')
+                    ->orderBy('history_id', 'desc')
+                    ->where('user_email', Auth::user()->email)
+                    ->get();
+            } else {
+                $allmails = DB::table('mails')
+                    ->select('*')
+                    ->where('label_ids', 'like', '%' . $label . '%')
+                // ->whereNot('label_ids' , 'like' ,'%TRASH%')
+                    ->orderBy('history_id', 'desc')
+                    ->where('user_email', Auth::user()->email)
+                    ->get();
 
+            }
+            return view('gmail.gmailmesseges', ['allmails' => $allmails]);
         }
-        return view('gmail.gmailmesseges', ['allmails' => $allmails]);
     }
 
     public function sendmail(Request $request)
     {
+        // dd($request->all());
+        // dd($request->all());
         $mailDetails = $request->all();
         $emialFrom = $mailDetails['From'];
         $userDetails = Auth::User();
@@ -164,15 +209,35 @@ class LabelController extends Controller
     {
         $scearchData = $request->all();
         //  dd($scearchData['scearch']);
-        $allmails = DB::table('mails')
-            ->select('*')
-            ->orwhere('from', 'like', '%' . $scearchData['scearch'] . '%')
+        $userDetails = DB::table('users')
+            ->select('user_type')
+            ->where('email', Auth::user()->email)
+            ->first();
+        $userType = $userDetails->user_type;
+        if ($userType == "Admin") {
+            $allmails = DB::table('mails')
+                ->select('*')
+                ->orwhere('from', 'like', '%' . $scearchData['scearch'] . '%')
             // ->orwhere('label_ids', 'like', '%' . $scearchData['scearch'] . '%')
-            ->orwhere('to', 'like', '%' . $scearchData['scearch'] . '%')
-            ->orwhere('subject', 'like', '%' . $scearchData['scearch'] . '%')
-            ->where('user_email', Auth::user()->email)
-            ->get();
-        return view('gmail.gmailmesseges', ['allmails' => $allmails]);
+                ->orwhere('to', 'like', '%' . $scearchData['scearch'] . '%')
+                ->orwhere('subject', 'like', '%' . $scearchData['scearch'] . '%')
+                ->orderBy('history_id', 'desc')
+            // ->where('user_email', Auth::user()->email)
+                ->get();
+            return view('gmail.gmailmesseges', ['allmails' => $allmails]);
+        } else {
+
+            $allmails = DB::table('mails')
+                ->select('*')
+                ->orwhere('from', 'like', '%' . $scearchData['scearch'] . '%')
+            // ->orwhere('label_ids', 'like', '%' . $scearchData['scearch'] . '%')
+                ->orwhere('to', 'like', '%' . $scearchData['scearch'] . '%')
+                ->orwhere('subject', 'like', '%' . $scearchData['scearch'] . '%')
+                ->orderBy('history_id', 'desc')
+                ->where('user_email', Auth::user()->email)
+                ->get();
+            return view('gmail.gmailmesseges', ['allmails' => $allmails]);
+        }
     }
 
     public function deletemail(Request $request)
@@ -197,28 +262,17 @@ class LabelController extends Controller
         $allmails = DB::table('mails')
             ->select('mail_id', 'label_ids')
             ->where('mail_id', $deletemail['delete'])
+            ->orderBy('history_id', 'desc')
             ->where('user_email', Auth::user()->email)
             ->first();
         $adddeletelabel = $allmails->label_ids . ',STARRED';
         DB::table('mails')
             ->where('mail_id', $deletemail['delete'])
             ->where('user_email', Auth::user()->email) // find your user by their email
+            ->orderBy('history_id', 'desc')
             ->limit(1) // optional - to ensure only one record is updated.
             ->update(array('label_ids' => $adddeletelabel)); // update the record in the DB.
         return view('gmail.gmailmesseges');
     }
-    public function showUser(Request $request)
-    {
-        // dd($request->all());
-        $userData = $request->all();
 
-        $users = DB::table('users')->select('*')->where('email', $userData['email'])->first();
-        // dd($users);
-        // $users = User::find($user->id);
-        // dd($user);
-
-        // $decrypted = Crypt::decrypt($user->password);
-        return view('gmail.label',compact('users'));
-    }
 }
-

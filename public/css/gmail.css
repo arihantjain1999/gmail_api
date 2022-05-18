@@ -1,5 +1,5 @@
     body{
-        background:#eee   
+        background: white;    
     }
     .email-app {
         display: flex;
@@ -224,8 +224,8 @@
         cursor: pointer;
         opacity: 0.8;
         position: fixed;
-        top: 60px;
-        right: 28px;
+        bottom: 10px;
+        right: 10px;
         width: 150px;
         border-color: green;
         border-radius: 10px;
@@ -324,7 +324,7 @@
      
       .sidenav {
         height: 100%; /* 100% Full-height */
-        width: 250px; /* 0 width - change this with JavaScript */
+        width: 200px; /* 0 width - change this with JavaScript */
         position: fixed; /* Stay in place */
         z-index: 3; /* Stay on top */
         top: 0;
@@ -354,15 +354,15 @@
         position: absolute;
         top: 60px;
         z-index: 100;
-        right: 50px;
-        font-size: 36px;
+        right: 30px;
+        font-size: 30px;
         margin-left: 50px;
       }
       
       /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
       #main {
         transition: margin-left .5s;
-        margin-left: 250px;
+        margin-left: 200px;
       }
       
       /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */

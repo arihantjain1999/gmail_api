@@ -14,7 +14,10 @@
                     </div>
                 </div>
             </div>
-           
+            @if(!empty($err))
+               {!! $err !!}
+            @endif
+
             @if(session('status'))
                 <div class="alert alert-success mb-1 mt-1">
                     {{ session('status') }}
@@ -44,9 +47,9 @@
                             @enderror
                     </div>
                 </div>
-                @if (!empty($err))
+                {{-- @if (!empty($err))
                     {{$err}}
-                @endif  
+                @endif   --}}
                 <div class="col-xs-12 col-sm-12 col-md-12">
                     <div class="form-group">
                         <strong>Password:</strong>

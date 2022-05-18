@@ -21,6 +21,19 @@ class UserController extends Controller
         return view('gmail.users' , compact('users'));
     }
     
+    public function showUser(Request $request)
+    {
+        // dd($request->all());
+        $userData = $request->all();
+
+        $users = DB::table('users')->select('*')->where('email', $userData['email'])->first();
+        // dd($users);
+        // $users = User::find($user->id);
+        // dd($user);
+
+        // $decrypted = Crypt::decrypt($user->password);
+        return view('gmail.label',compact('users'));
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -53,7 +66,7 @@ class UserController extends Controller
             return redirect()->route('user.index');
         }
         else{
-            return redirect()->route('user.create' , ['err' => "password does not match"] );
+            return view('gmail.create' , ['err' => '<div class="alert alert-warning alert-dismissible fade show m-2" role="alert">Passworrd Does not matches </div>'] );
         }
     }
 
@@ -63,16 +76,6 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    // public function show($user)
-    // {
-    //     // dd($user);
-    //     $users =DB::table('users')
-    //     ->select('*')
-    //     ->where('email', $user)
-    //     ->first();
-    //     // $decrypted = Crypt::decrypt($user->password);
-    //     return view('gmail.label',compact('users'));
-    // }
 
     /**
      * Show the form for editing the specified resource.
@@ -115,6 +118,22 @@ class UserController extends Controller
         $users = User::find($user->id);
         $users->update($fields);
         // $users = User::all();    
+        $updateuseremail = $request->all() ;
+        $users = $updateuseremail['email'];
+        $users =DB::table('users')
+        ->select('*')
+        ->where('email', $users)
+        ->first();
+        return view('gmail.label',compact('users'));
+    }
+    public function updateUser(Request $request, User $user)
+    {
+        // dd($request->all());
+        $fields = $request->all();
+        // dd($request->all());
+        $users = User::find($user->id);
+        $users->update($fields);
+        // $users = User::all();
         $updateuseremail = $request->all() ;
         $users = $updateuseremail['email'];
         $users =DB::table('users')

@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('token')->nullable();
             $table->string('refreshToken')->nullable();
             $table->string('user_type')->nullable();
+            $table->string('file_name')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

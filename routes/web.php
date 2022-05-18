@@ -38,14 +38,16 @@ Route::get('/label/deletemail', [LabelController::class, 'deletemail'])->name('l
 Route::get('/label/starredmail', [LabelController::class, 'starredmail'])->name('label.starredmail')->middleware('auth');
 Route::post('/label/sendmail', [LabelController::class, 'sendmail'])->name('label.sendmail')->middleware('auth');
 Route::get('/label/scearch', [LabelController::class, 'scearch'])->name('label.scearch')->middleware('auth');
-Route::get('/label/showUser',[ LabelController::class,'showUser'])->name('label.showUser')->middleware('auth');
+Route::get('/label/showUser',[ UserController::class,'showUser'])->name('label.showUser')->middleware('auth');
 Route::resource('label', LabelController::class)->middleware('auth');
+Route::get('editUser/{id}',[UserController::class,'editUser'])->name('user.editUser')->middleware('auth');
 Route::resource('user',UserController::class)->middleware('auth');
-Route::get('editUser/{id}',[userController::class,'editUser'])->name('user.editUser')->middleware('auth');
 // Route::resource('gmail',GmailController::class)->middleware('auth');
 
 Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware('auth');
-
+Route::middleware(['auth', 'isAdmin'])->group(function(){
+    Route::resource('user',UserController::class);
+});
 // route for gmail login
 
 
