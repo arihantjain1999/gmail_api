@@ -25,7 +25,8 @@ return new class extends Migration
             $table->string('thread_id')->nullable();
             $table->string('label_ids')->nullable();
             $table->string('history_id')->nullable();
-            $table->string('user_email');
+            $table->string('user_email')->nullable();
+            $table->string('user_name')->nullable();
             $table->timestamps();
         });
     }

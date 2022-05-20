@@ -3,15 +3,15 @@
     @include('gmail.index')
     <div id="main">
         @php
-            $maildetails = $user = DB::table('mails')
-                ->where('mail_id', $mail_id)
-                ->first();
+            // $maildetails = $user = DB::table('mails')
+            //     ->where('mail_id', $mail_id)
+            //     ->first();
                 // dd($maildetails->file_name);
                 $encodedData = $maildetails->body ; 
                 $encodedData = str_replace(' ','+',$encodedData);
                 $encodedData = str_replace('_','/',$encodedData);
                 $encodedData = str_replace('-','+',$encodedData);
-            $decocedData = base64_decode($encodedData);
+                $decocedData = base64_decode($encodedData);
             // dd($decocedData);
         @endphp
         <div class="m-">
@@ -55,7 +55,8 @@
                                             <div class="d-flex align-items-center">
 
                                                 <div class="sender align-items-center">
-                                                    <div> User : {{ $maildetails->from  }}</div>
+                                                    {{-- <div> User : {{ $maildetails->from  }}</div> --}}
+                                                    <div> User : {{ $maildetails->user_name  }}</div>
                                                     <div> From : {{ $maildetails->from }}</div>
                                                     <div>To : {{ $maildetails->to }}</div>
                                                     <div class="date">{{ $maildetails->date }}</div>
@@ -74,7 +75,7 @@
                                 @endphp
                                 <span>Files :</span>
                                 @foreach ($filenames as $filename)
-                                    <a href="{{ asset('storage\public\attachment\\'.$filename.'') }} " target="blank">{{ $filename }}</a>
+                                    <a href="{{ asset('storage\public\attachment\\'.$filename.'') }} " target="top">{{ $filename }}</a>
                                 @endforeach
                             </div>
                         </div>

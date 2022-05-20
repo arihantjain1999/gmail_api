@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Str;
 use App\Models\Label;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -94,7 +94,10 @@ class LabelController extends Controller
      */
     public function show(Request $request, $id)
     {
-        return view('gmail.singleemail', ['mail_id' => $id]);
+        $mailDetails = DB::table('mails')
+                ->where('mail_id', $id)
+                ->first();
+        return view('gmail.singleemail', ['maildetails' => $mailDetails]);
     }
 
     /**
@@ -208,7 +211,6 @@ class LabelController extends Controller
     public function scearch(Request $request)
     {
         $scearchData = $request->all();
-        //  dd($scearchData['scearch']);
         $userDetails = DB::table('users')
             ->select('user_type')
             ->where('email', Auth::user()->email)
@@ -265,14 +267,27 @@ class LabelController extends Controller
             ->orderBy('history_id', 'desc')
             ->where('user_email', Auth::user()->email)
             ->first();
-        $adddeletelabel = $allmails->label_ids . ',STARRED';
-        DB::table('mails')
-            ->where('mail_id', $deletemail['delete'])
-            ->where('user_email', Auth::user()->email) // find your user by their email
-            ->orderBy('history_id', 'desc')
-            ->limit(1) // optional - to ensure only one record is updated.
-            ->update(array('label_ids' => $adddeletelabel)); // update the record in the DB.
-        return view('gmail.gmailmesseges');
+        if(Str::contains($allmails->label_ids , 'STARRED') == false)
+        {
+            // dd('false');
+            $adddeletelabel = $allmails->label_ids . ',STARRED';
+            DB::table('mails')
+                ->where('mail_id', $deletemail['delete'])
+                ->where('user_email', Auth::user()->email) // find your user by their email
+                ->orderBy('history_id', 'desc')
+                ->limit(1) // optional - to ensure only one record is updated.
+                ->update(array('label_ids' => $adddeletelabel)); // update the record in the DB.
+            return view('gmail.gmailmesseges');
+        }
+        else{
+            $adddeletelabel = str_replace(',STARRED' ,'',  $allmails->label_ids);
+            DB::table('mails')
+                ->where('mail_id', $deletemail['delete'])
+                ->where('user_email', Auth::user()->email) // find your user by their email
+                ->orderBy('history_id', 'desc')
+                ->limit(1) // optional - to ensure only one record is updated.
+                ->update(array('label_ids' => $adddeletelabel)); // update the record in the DB.
+            return view('gmail.gmailmesseges');
+        }
     }
-
 }

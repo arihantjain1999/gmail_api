@@ -161,6 +161,7 @@ function getGmailMessage($loginDetails)
             $mailDatabase['label_ids'] = $arr;
             $mailDatabase['history_id'] = $response['historyId'];
             $mailDatabase['user_email'] = Auth::user()->email;
+            $mailDatabase['user_name'] = Auth::user()->name;
 
             array_push($allMailArray, $mailDatabase);
             // dd($allMailArray['label_ids']);
@@ -174,6 +175,7 @@ function getGmailMessage($loginDetails)
             if (!$test) {
                 $inputData[$key] = array(
                     "body" => $allMail['body']??'',
+                    "user_name" => $allMail['user_name']??'',
                     "from" => $allMail['from'],
                     "date" => $allMail['date'],
                     "message_id" => $allMail['message_id'] ?? '',

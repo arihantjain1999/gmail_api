@@ -9,6 +9,7 @@ class Mail extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'user_name',
         'mail_id',
         'body',
         'from',

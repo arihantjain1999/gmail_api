@@ -122,32 +122,34 @@
                         </ul>
                     @endforeach
                     {{-- @dd('hello'); --}}
-                    <button class="open-button bg-white text-black  border-2" onclick="openForm()">
+                    <button class="open-button bg-white text-black  border-2  "  data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                         <i class="fa fa-pen mx-2"></i>
                         COMPOSE
                     </button>
-
-                    <div class="chat-popup" id="myForm">
-                        <form action="{{ route('label.sendmail') }}" class="form-container" enctype="multipart/form-data" method="post">
-                            @csrf
-                            <button type="button" class="bg-danger text-white border-0" onclick="closeForm()">&times;</button>
-                        
-                            <input class="fill-text my-2 p-2 w-100 border-0 rounded" type="text" placeholder="From" name="From" id="from" style="background-color: #f0f0f0" value="{{ Auth::user()->email }}">
-                            <input class="fill-text my-2 p-2 w-100 border-0 rounded" type="text" placeholder="To" name="To" id="to" required style="background-color: #f0f0f0">
-                            <input class="fill-text my-2 p-2 w-100 border-0 rounded" type="text" placeholder="Cc" name="Cc" id="cc" style="background-color: #f0f0f0">
-                            <input class="fill-text my-2 p-2 w-100 border-0 rounded" type="text" placeholder="Bcc" name="Bcc" id="bcc" style="background-color: #f0f0f0">
-                            <input class="fill-text my-2 p-2 w-100 border-0 rounded" type="text" placeholder="Subject" name="Subject" id="Subject" required style="background-color: #f0f0f0">
-                            <textarea class="rounded" placeholder="Type message.." name="Body" id="messageText" required style="background-color: #f0f0f0"></textarea>
-                            <br/>
-                            <div class="d-flex justify-content-between">
-                                {{-- <div class="">
-                                    <i class="fa fa-paperclip"></i>
-                                    <input type="file" name="File">
-                                </div> --}}
-                                {{Form::file('image[]' , ['multiple' => true]) }}
-                                <button type="submit" class="btn rounded text-white" id="send" style="background-color: #32a89d;">Send <i class="fa fa-paper-plane"></i></button>
-                            </div>
-                        </form>
+                
+                    <div class="modal" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered model-lg"><div class="modal-content">
+                            <form action="{{ route('label.sendmail') }}" class="form-container" enctype="multipart/form-data" method="post">
+                                @csrf
+                                <button type="button" class="bg-danger text-white border-0" data-bs-dismiss="modal">&times;</button>
+                            
+                                <input class="fill-text my-2 p-2 w-100 border-0 rounded" type="text" placeholder="From" name="From" id="from" style="background-color: #f0f0f0" value="{{ Auth::user()->email }}">
+                                <input class="fill-text my-2 p-2 w-100 border-0 rounded" type="text" placeholder="To" name="To" id="to" required style="background-color: #f0f0f0">
+                                <input class="fill-text my-2 p-2 w-100 border-0 rounded" type="text" placeholder="Cc" name="Cc" id="cc" style="background-color: #f0f0f0">
+                                <input class="fill-text my-2 p-2 w-100 border-0 rounded" type="text" placeholder="Bcc" name="Bcc" id="bcc" style="background-color: #f0f0f0">
+                                <input class="fill-text my-2 p-2 w-100 border-0 rounded" type="text" placeholder="Subject" name="Subject" id="Subject" required style="background-color: #f0f0f0">
+                                <textarea class="rounded" placeholder="Type message.." name="Body" id="messageText" required style="background-color: #f0f0f0"></textarea>
+                                <br/>
+                                <div class="d-flex justify-content-between">
+                                    {{-- <div class="">
+                                        <i class="fa fa-paperclip"></i>
+                                        <input type="file" name="File">
+                                    </div> --}}
+                                    {{Form::file('image[]', ['multiple' => true , 'class' => 'fa fa-paperclip'])}}
+                                    <button type="submit" class="btn rounded text-white" id="send" style="background-color: #32a89d;">Send <i class="fa fa-paper-plane"></i></button>
+                                </div>
+                            </form>
+                        </div></div>
                     </div>
                 </div>
 
